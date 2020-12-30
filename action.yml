@@ -1,0 +1,150 @@
+name: benchdiff
+description: use benchdiff
+inputs:
+  benchdiff_version:
+    description: Version of benchdiff to use (exclude "v" from the front of the release name)
+    default: 0.4.1
+    required: false
+  benchdiff_dir:
+    description: Where benchdiff will be installed
+    default: ${{ runner.temp }}/benchdiff
+    required: false
+  install_only:
+    description: Whether to stop after installing. Any value other than "false" is interpreted as true.
+    default: "false"
+    required: false
+  report_status:
+    description: Whether to report the status. Any value other than "true" is interpreted as false.
+    default: "true"
+    required: false
+  status_name:
+    description: Name to use in reporting status.
+    default: benchdiff
+    required: false
+  github_token:
+    description: Token to use for reporting status.
+    required: true
+  benchdiff_args:
+    description: |
+      Arguments for the benchdiff command.
+      All instances of $default_base_ref will be replaced with this repo's default branch.
+
+      See https://github.com/willabides/benchdiff for usage
+    default: "--base-ref=$default_base_ref"
+    required: false
+outputs:
+  benchdiff_bin:
+    description: path to the benchdiff executable
+    value: ${{ steps.install.outputs.benchdiff_bin }}
+  benchstat_output:
+    description: output from benchstat
+    value: ${{ steps.run-benchdiff.outputs.benchstat_output }}
+  bench_command:
+    description: command used to run benchmarks
+    value: ${{ steps.run-benchdiff.outputs.bench_command }}
+  head_sha:
+    description: git revision benchstat used as head
+    value: ${{ steps.run-benchdiff.outputs.head_sha }}
+  base_sha:
+    description: git revision benchstat used as base
+    value: ${{ steps.run-benchdiff.outputs.base_sha }}
+  degraded_result:
+    description: whether any part of the results is degraded
+    value: ${{ steps.run-benchdiff.outputs.degraded_result }}
+runs:
+  using: composite
+  steps:
+    - id: linux-only
+      shell: bash
+      run: |
+        if [ "${{ runner.os }}" != "Linux" ]; then
+          echo This action only runs on Linux
+          exit 1
+        fi
+    - id: install
+      shell: bash
+      run: |
+        benchdiff_dir="${{ inputs.benchdiff_dir }}"
+        mkdir -p "$benchdiff_dir"
+        cd "$benchdiff_dir"
+        benchdiff_version="${{ inputs.benchdiff_version }}"
+        tarfile="benchdiff_${benchdiff_version}_linux_amd64.tar.gz"
+        url="https://github.com/WillAbides/benchdiff/releases/download/v${benchdiff_version}/${tarfile}"
+        curl --silent -OL "$url"
+        tar -xzf "$tarfile" benchdiff
+        rm "$tarfile"
+        echo "::set-output name=benchdiff_bin::$benchdiff_dir/benchdiff"
+    - id: run-benchdiff
+      shell: bash
+      run: |
+        if [ "${{ inputs.install_only }}" != "false" ]; then
+          exit 0
+        fi
+        set_output() {
+          value="$2"
+          value="${value//'%'/'%25'}"
+          value="${value//$'\n'/'%0A'}"
+          value="${value//$'\r'/'%0D'}"
+          echo "::set-output name=$1::$value"
+        }
+        benchdiff_args='${{ inputs.benchdiff_args }} --json-output'
+        if [[ "$benchdiff_args" == *'$default_base_ref'* ]]; then
+          remote="$(git rev-parse --abbrev-ref --symbolic-full-name @{u} | cut -d "/" -f 1)"
+          default_branch="$(git remote show $remote | grep "HEAD branch" | cut -d ":" -f 2 | tr -d '[:space:]')"
+          benchdiff_args="$(sed "s|\$default_base_ref|$remote/$default_branch|g" <<< "$benchdiff_args")"
+        fi
+        cmd="${{ steps.install.outputs.benchdiff_bin }}"
+        output="$(xargs "$cmd" <<< "$benchdiff_args")"
+
+        set_output benchstat_output "$(jq -r '.benchstat_output' <<< "$output")"
+        set_output head_sha "$(jq -r '.head_sha' <<< "$output")"
+        set_output base_sha "$(jq -r '.base_sha' <<< "$output")"
+        set_output bench_command "$(jq -r '.bench_command' <<< "$output")"
+        set_output degraded_result "$(jq -r '.degraded_result' <<< "$output")"
+    - id: report-status
+      shell: bash
+      run: |
+        if [ "${{ inputs.install_only }}" != "false" ]; then
+          exit 0
+        fi
+        if [ "${{ inputs.report_status }}" != "true" ]; then
+          exit 0
+        fi
+
+        output_summary="
+
+        ${{ steps.run-benchdiff.outputs.benchstat_output }}
+
+        "
+
+        conclusion="success"
+        if [ "${{ steps.run-benchdiff.outputs.degraded_result }}" = "true" ]; then
+          conclusion="failure"
+        fi
+        head_sha="${{ steps.run-benchdiff.outputs.head_sha }}"
+        name="${{ inputs.status_name }}"
+        output_title=""
+        postdata="$(jq -n \
+        --arg conclusion "$conclusion" \
+        --arg head_sha "$head_sha" \
+        --arg name "$name" \
+        --arg output_summary "$output_summary" \
+        --arg output_title "$output_title" \
+        '
+          {
+            "conclusion": $conclusion,
+            "head_sha": $head_sha,
+            "name": $name,
+            "output": {
+              "summary": $output_summary,
+              "title": $output_title
+            }
+          }
+        '
+        )"
+
+        curl -X 'POST' -d "$postdata" \
+        -H 'Accept: application/vnd.github.v3+json' \
+        -H 'Content-Type: application/json' \
+        -H "Authorization: token ${{ inputs.github_token }}" \
+        'https://api.github.com/repos/WillAbides/bench-test/check-runs'
