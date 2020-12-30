@@ -64,16 +64,9 @@ runs:
     - id: install
       shell: bash
       run: |
-        benchdiff_dir="${{ inputs.benchdiff_dir }}"
-        mkdir -p "$benchdiff_dir"
-        cd "$benchdiff_dir"
-        benchdiff_version="${{ inputs.benchdiff_version }}"
-        tarfile="benchdiff_${benchdiff_version}_linux_amd64.tar.gz"
-        url="https://github.com/WillAbides/benchdiff/releases/download/v${benchdiff_version}/${tarfile}"
-        curl --silent -OL "$url"
-        tar -xzf "$tarfile" benchdiff
-        rm "$tarfile"
-        echo "::set-output name=benchdiff_bin::$benchdiff_dir/benchdiff"
+        BENCHDIFF_DIR="${{ inputs.benchdiff_dir }}"
+        BENCHDIFF_VERSION="${{ inputs.benchdiff_version }}"
+        ./src/install.sh
     - id: run-benchdiff
       shell: bash
       run: |
