@@ -6,12 +6,19 @@ set -e
 #
 # $BENCHDIFF_DIR
 # $BENCHDIFF_VERSION
-# $ACTION_PATH
 
 if [ "$(uname -s)" != "Linux" ]; then
   echo This action only runs on Linux
   exit 1
 fi
+
+set_output() {
+  value="$2"
+  value="${value//'%'/'%25'}"
+  value="${value//$'\n'/'%0A'}"
+  value="${value//$'\r'/'%0D'}"
+  echo "::set-output name=$1::$value"
+}
 
 mkdir -p "$BENCHDIFF_DIR"
 cd "$BENCHDIFF_DIR"
@@ -20,4 +27,4 @@ url="https://github.com/WillAbides/benchdiff/releases/download/v${BENCHDIFF_VERS
 curl --silent -OL "$url"
 tar -xzf "$tarfile" benchdiff
 rm "$tarfile"
-"$ACTION_PATH/src/set-output.sh" "benchdiff_bin" "$BENCHDIFF_DIR/benchdiff"
+set_output "benchdiff_bin" "$BENCHDIFF_DIR/benchdiff"
