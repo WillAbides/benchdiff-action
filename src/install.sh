@@ -20,4 +20,4 @@ url="https://github.com/WillAbides/benchdiff/releases/download/v${BENCHDIFF_VERS
 curl --silent -OL "$url"
 tar -xzf "$tarfile" benchdiff
 rm "$tarfile"
-"$ACTION_PATH/set-output.sh" "benchdiff_bin" "$BENCHDIFF_DIR/benchdiff"
+"$ACTION_PATH/src/set-output.sh" "benchdiff_bin" "$BENCHDIFF_DIR/benchdiff"

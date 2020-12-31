@@ -29,8 +29,8 @@ fi
 
 cmd="$BENCHDIFF_BIN"
 output="$(xargs "$cmd" <<<"$args")"
-"$ACTION_PATH/set-output.sh" benchstat_output "$(jq -r '.benchstat_output' <<<"$output")"
-"$ACTION_PATH/set-output.sh" head_sha "$(jq -r '.head_sha' <<<"$output")"
-"$ACTION_PATH/set-output.sh" base_sha "$(jq -r '.base_sha' <<<"$output")"
-"$ACTION_PATH/set-output.sh" bench_command "$(jq -r '.bench_command' <<<"$output")"
-"$ACTION_PATH/set-output.sh" degraded_result "$(jq -r '.degraded_result' <<<"$output")"
+"$ACTION_PATH/src/set-output.sh" benchstat_output "$(jq -r '.benchstat_output' <<<"$output")"
+"$ACTION_PATH/src/set-output.sh" head_sha "$(jq -r '.head_sha' <<<"$output")"
+"$ACTION_PATH/src/set-output.sh" base_sha "$(jq -r '.base_sha' <<<"$output")"
+"$ACTION_PATH/src/set-output.sh" bench_command "$(jq -r '.bench_command' <<<"$output")"
+"$ACTION_PATH/src/set-output.sh" degraded_result "$(jq -r '.degraded_result' <<<"$output")"
