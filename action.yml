@@ -64,9 +64,8 @@ runs:
     - id: install
       shell: bash
       run: |
-        pwd
-        BENCHDIFF_DIR="${{ inputs.benchdiff_dir }}"
-        BENCHDIFF_VERSION="${{ inputs.benchdiff_version }}"
+        export BENCHDIFF_DIR="${{ inputs.benchdiff_dir }}"
+        export BENCHDIFF_VERSION="${{ inputs.benchdiff_version }}"
         ${{ github.action_path }}/src/install.sh
     - id: run-benchdiff
       shell: bash
