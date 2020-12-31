@@ -67,7 +67,7 @@ runs:
         pwd
         BENCHDIFF_DIR="${{ inputs.benchdiff_dir }}"
         BENCHDIFF_VERSION="${{ inputs.benchdiff_version }}"
-        ./src/install.sh
+        ${{ github.action_path }}/src/install.sh
     - id: run-benchdiff
       shell: bash
       run: |
