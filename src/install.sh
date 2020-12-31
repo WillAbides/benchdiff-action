@@ -6,6 +6,7 @@ set -e
 #
 # $BENCHDIFF_DIR
 # $BENCHDIFF_VERSION
+# $ACTION_PATH
 
 if [ "$(uname -s)" != "Linux" ]; then
   echo This action only runs on Linux

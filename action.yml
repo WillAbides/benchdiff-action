@@ -64,36 +64,20 @@ runs:
     - id: install
       shell: bash
       run: |
-        export BENCHDIFF_DIR="${{ inputs.benchdiff_dir }}"
-        export BENCHDIFF_VERSION="${{ inputs.benchdiff_version }}"
-        ${{ github.action_path }}/src/install.sh
+        ACTION_PATH="${{ github.action_path }}"
+        BENCHDIFF_DIR="${{ inputs.benchdiff_dir }}"
+        BENCHDIFF_VERSION="${{ inputs.benchdiff_version }}"
+        export ACTION_PATH BENCHDIFF_DIR BENCHDIFF_VERSION
+        "$ACTION_PATH/src/install.sh"
     - id: run-benchdiff
       shell: bash
       run: |
-        if [ "${{ inputs.install_only }}" != "false" ]; then
-          exit 0
-        fi
-        set_output() {
-          value="$2"
-          value="${value//'%'/'%25'}"
-          value="${value//$'\n'/'%0A'}"
-          value="${value//$'\r'/'%0D'}"
-          echo "::set-output name=$1::$value"
-        }
-        benchdiff_args='${{ inputs.benchdiff_args }} --json-output'
-        if [[ "$benchdiff_args" == *'$default_base_ref'* ]]; then
-          remote="$(git rev-parse --abbrev-ref --symbolic-full-name @{u} | cut -d "/" -f 1)"
-          default_branch="$(git remote show $remote | grep "HEAD branch" | cut -d ":" -f 2 | tr -d '[:space:]')"
-          benchdiff_args="$(sed "s|\$default_base_ref|$remote/$default_branch|g" <<< "$benchdiff_args")"
-        fi
-        cmd="${{ steps.install.outputs.benchdiff_bin }}"
-        output="$(xargs "$cmd" <<< "$benchdiff_args")"
-
-        set_output benchstat_output "$(jq -r '.benchstat_output' <<< "$output")"
-        set_output head_sha "$(jq -r '.head_sha' <<< "$output")"
-        set_output base_sha "$(jq -r '.base_sha' <<< "$output")"
-        set_output bench_command "$(jq -r '.bench_command' <<< "$output")"
-        set_output degraded_result "$(jq -r '.degraded_result' <<< "$output")"
+        ACTION_PATH='${{ github.action_path }}'
+        INSTALL_ONLY='${{ inputs.install_only }}'
+        BENCHDIFF_ARGS='${{ inputs.benchdiff_args }}'
+        BENCHDIFF_BIN='${{ steps.install.outputs.benchdiff_bin }}'
+        export ACTION_PATH INSTALL_ONLY BENCHDIFF_ARGS BENCHDIFF_BIN
+        "$ACTION_PATH/src/run.sh"
     - id: report-status
       shell: bash
       run: |
