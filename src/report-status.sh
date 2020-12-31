@@ -60,5 +60,5 @@ jq -n \
 curl --silent -X 'POST' -d "$postdata" \
 -H 'Accept: application/vnd.github.v3+json' \
 -H 'Content-Type: application/json' \
--H "Authorization: token ${{ inputs.github_token }}" \
+-H "Authorization: token $GH_TOKEN" \
 "https://api.github.com/repos/$GITHUB_REPOSITORY/check-runs"
