@@ -1,5 +1,5 @@
 name: benchdiff
-description: use benchdiff
+description: run benchdiff and report status
 branding:
   icon: zap
   color: purple
