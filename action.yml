@@ -81,47 +81,13 @@ runs:
     - id: report-status
       shell: bash
       run: |
-        if [ "${{ inputs.install_only }}" != "false" ]; then
-          exit 0
-        fi
-        if [ "${{ inputs.report_status }}" != "true" ]; then
-          exit 0
-        fi
-
-        output_summary="
-
-        ${{ steps.run-benchdiff.outputs.benchstat_output }}
-
-        "
-
-        conclusion="success"
-        if [ "${{ steps.run-benchdiff.outputs.degraded_result }}" = "true" ]; then
-          conclusion="failure"
-        fi
-        head_sha="${{ steps.run-benchdiff.outputs.head_sha }}"
-        name="${{ inputs.status_name }}"
-        output_title=""
-        postdata="$(jq -n \
-        --arg conclusion "$conclusion" \
-        --arg head_sha "$head_sha" \
-        --arg name "$name" \
-        --arg output_summary "$output_summary" \
-        --arg output_title "$output_title" \
-        '
-          {
-            "conclusion": $conclusion,
-            "head_sha": $head_sha,
-            "name": $name,
-            "output": {
-              "summary": $output_summary,
-              "title": $output_title
-            }
-          }
-        '
-        )"
-
-        curl -X 'POST' -d "$postdata" \
-        -H 'Accept: application/vnd.github.v3+json' \
-        -H 'Content-Type: application/json' \
-        -H "Authorization: token ${{ inputs.github_token }}" \
-        'https://api.github.com/repos/WillAbides/bench-test/check-runs'
+        ACTION_PATH='${{ github.action_path }}'
+        INSTALL_ONLY='${{ inputs.install_only }}'
+        REPORT_STATUS='${{ inputs.report_status }}'
+        BENCHSTAT_OUTPUT='${{ steps.run-benchdiff.outputs.benchstat_output }}'
+        DEGRADED_RESULT='${{ steps.run-benchdiff.outputs.degraded_result }}'
+        HEAD_SHA='${{ steps.run-benchdiff.outputs.head_sha }}'
+        GH_TOKEN='${{ inputs.github_token }}'
+        STATUS_NAME='${{ inputs.status_name }}'
+        export ACTION_PATH INSTALL_ONLY REPORT_STATUS BENCHSTAT_OUTPUT DEGRADED_RESULT HEAD_SHA GH_TOKEN STATUS_NAME
+        "$ACTION_PATH/src/report-status.sh"
