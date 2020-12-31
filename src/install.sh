@@ -13,14 +13,6 @@ if [ "$(uname -s)" != "Linux" ]; then
   exit 1
 fi
 
-set_output() {
-  value="$2"
-  value="${value//'%'/'%25'}"
-  value="${value//$'\n'/'%0A'}"
-  value="${value//$'\r'/'%0D'}"
-  echo "::set-output name=$1::$value"
-}
-
 mkdir -p "$BENCHDIFF_DIR"
 cd "$BENCHDIFF_DIR"
 tarfile="benchdiff_${BENCHDIFF_VERSION}_linux_amd64.tar.gz"
@@ -28,4 +20,4 @@ url="https://github.com/WillAbides/benchdiff/releases/download/v${BENCHDIFF_VERS
 curl --silent -OL "$url"
 tar -xzf "$tarfile" benchdiff
 rm "$tarfile"
-set_output "benchdiff_bin" "$BENCHDIFF_DIR/benchdiff"
+"$ACTION_PATH/set-output.sh" "benchdiff_bin" "$BENCHDIFF_DIR/benchdiff"

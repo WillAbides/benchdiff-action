@@ -18,14 +18,6 @@ if [ "$INSTALL_ONLY" != "false" ]; then
   exit 0
 fi
 
-set_output() {
-  value="$2"
-  value="${value//'%'/'%25'}"
-  value="${value//$'\n'/'%0A'}"
-  value="${value//$'\r'/'%0D'}"
-  echo "::set-output name=$1::$value"
-}
-
 args="$BENCHDIFF_ARGS --json-output"
 # shellcheck disable=SC2016 # we don't want to expand $default_base_ref
 if [[ "$args" == *'$default_base_ref'* ]]; then
@@ -37,8 +29,8 @@ fi
 
 cmd="$BENCHDIFF_BIN"
 output="$(xargs "$cmd" <<<"$args")"
-set_output benchstat_output "$(jq -r '.benchstat_output' <<<"$output")"
-set_output head_sha "$(jq -r '.head_sha' <<<"$output")"
-set_output base_sha "$(jq -r '.base_sha' <<<"$output")"
-set_output bench_command "$(jq -r '.bench_command' <<<"$output")"
-set_output degraded_result "$(jq -r '.degraded_result' <<<"$output")"
+"$ACTION_PATH/set-output.sh" benchstat_output "$(jq -r '.benchstat_output' <<<"$output")"
+"$ACTION_PATH/set-output.sh" head_sha "$(jq -r '.head_sha' <<<"$output")"
+"$ACTION_PATH/set-output.sh" base_sha "$(jq -r '.base_sha' <<<"$output")"
+"$ACTION_PATH/set-output.sh" bench_command "$(jq -r '.bench_command' <<<"$output")"
+"$ACTION_PATH/set-output.sh" degraded_result "$(jq -r '.degraded_result' <<<"$output")"
