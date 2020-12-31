@@ -1,5 +1,8 @@
 name: benchdiff
 description: use benchdiff
+branding:
+  icon: zap
+  color: purple
 inputs:
   benchdiff_version:
     description: Version of benchdiff to use (exclude "v" from the front of the release name)
