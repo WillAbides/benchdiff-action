@@ -27,11 +27,7 @@ if [ "$REPORT_STATUS" != "true" ]; then
   exit 0
 fi
 
-output_summary="
-
-$BENCHSTAT_OUTPUT
-
-"
+output_summary="$BENCHSTAT_OUTPUT"
 
 conclusion="success"
 if [ "$DEGRADED_RESULT" = "true" ]; then
