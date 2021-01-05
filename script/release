@@ -1,0 +1,27 @@
+#!/bin/sh
+
+set -e
+
+CDPATH="" cd -- "$(dirname -- "$(dirname -- "$0")")"
+
+if [ -z "$1" ]; then
+  echo first and only argument should be a version
+  exit 1
+fi
+
+readonly version="$(script/semver bump release "$1")"
+readonly major="$(script/semver get major "$version")"
+readonly branch="$(git rev-parse --abbrev-ref HEAD)"
+readonly commit="$(git rev-parse HEAD)"
+
+if [ "v$major" != "$branch" ]; then
+  echo "$version must be released from the branch v$major"
+  exit 1
+fi
+
+script/octo repos create-release \
+  --repo WillAbides/benchdiff-action \
+  --tag_name "v$version" \
+  --target_commitish "$commit" \
+  --name "v$version" \
+  --format '{{.html_url}}'
