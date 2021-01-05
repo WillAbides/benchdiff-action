@@ -10,6 +10,8 @@ set -e
 # $BENCHSTAT_OUTPUT
 # $DEGRADED_RESULT
 # $HEAD_SHA
+# $BASE_SHA
+# $BENCH_COMMAND
 # $GH_TOKEN
 # $STATUS_NAME
 # $GITHUB_REPOSITORY
@@ -27,7 +29,20 @@ if [ "$REPORT_STATUS" != "true" ]; then
   exit 0
 fi
 
-output_summary="$BENCHSTAT_OUTPUT"
+output_text="$BENCHSTAT_OUTPUT"
+output_summary="$(cat <<EOF
+## Benchdiff Results
+
+Benchmark Command: \`$BENCH_COMMAND\`
+
+HEAD sha: $HEAD_SHA
+
+Base sha: $BASE_SHA
+
+Degraded: $DEGRADED_RESULT
+
+EOF
+)"
 
 conclusion="success"
 if [ "$DEGRADED_RESULT" = "true" ]; then
@@ -38,6 +53,7 @@ jq -n \
 --arg conclusion "$conclusion" \
 --arg head_sha "$HEAD_SHA" \
 --arg name "$STATUS_NAME" \
+--arg output_text "$output_text" \
 --arg output_summary "$output_summary" \
 --arg output_title "" \
 '
@@ -46,8 +62,9 @@ jq -n \
   "head_sha": $head_sha,
   "name": $name,
   "output": {
-    "summary": $output_summary,
-    "title": $output_title
+    "text": $output_text,
+    "title": $output_title,
+    "summary": $output_summary
   }
 }
 '
