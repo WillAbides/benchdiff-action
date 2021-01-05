@@ -18,7 +18,7 @@ if [ "$INSTALL_ONLY" != "false" ]; then
   exit 0
 fi
 
-args="$BENCHDIFF_ARGS --json-output"
+args="$BENCHDIFF_ARGS --json"
 # shellcheck disable=SC2016 # we don't want to expand $default_base_ref
 if [[ "$args" == *'$default_base_ref'* ]]; then
   remote="$(git rev-parse --abbrev-ref --symbolic-full-name @{u} | cut -d "/" -f 1)"
