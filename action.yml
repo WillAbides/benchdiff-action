@@ -84,15 +84,14 @@ runs:
     - id: report-status
       shell: bash
       run: |
-        ACTION_PATH='${{ github.action_path }}'
-        INSTALL_ONLY='${{ inputs.install_only }}'
-        REPORT_STATUS='${{ inputs.report_status }}'
-        BENCH_COMMAND='${{ steps.run-benchdiff.outputs.bench_command }}'
-        BENCHSTAT_OUTPUT='${{ steps.run-benchdiff.outputs.benchstat_output }}'
-        DEGRADED_RESULT='${{ steps.run-benchdiff.outputs.degraded_result }}'
-        HEAD_SHA='${{ steps.run-benchdiff.outputs.head_sha }}'
-        BASE_SHA='${{ steps.run-benchdiff.outputs.base_sha }}'
-        GH_TOKEN='${{ inputs.github_token }}'
-        STATUS_NAME='${{ inputs.status_name }}'
-        export ACTION_PATH INSTALL_ONLY REPORT_STATUS BENCHSTAT_OUTPUT DEGRADED_RESULT HEAD_SHA GH_TOKEN STATUS_NAME
+        export ACTION_PATH='${{ github.action_path }}'
+        export INSTALL_ONLY='${{ inputs.install_only }}'
+        export REPORT_STATUS='${{ inputs.report_status }}'
+        export BENCH_COMMAND='${{ steps.run-benchdiff.outputs.bench_command }}'
+        export BENCHSTAT_OUTPUT='${{ steps.run-benchdiff.outputs.benchstat_output }}'
+        export DEGRADED_RESULT='${{ steps.run-benchdiff.outputs.degraded_result }}'
+        export HEAD_SHA='${{ steps.run-benchdiff.outputs.head_sha }}'
+        export BASE_SHA='${{ steps.run-benchdiff.outputs.base_sha }}'
+        export GH_TOKEN='${{ inputs.github_token }}'
+        export STATUS_NAME='${{ inputs.status_name }}'
         "$ACTION_PATH/src/report-status.sh"
