@@ -2,6 +2,10 @@ systems:
 - darwin/amd64
 - linux/amd64
 dependencies:
+  action-doc:
+    template: action-doc#action-doc
+    vars:
+      version: 0.0.0
   octo:
     template: origin#octo
     vars:
@@ -14,6 +18,14 @@ dependencies:
     required_vars:
     - version
 templates:
+  action-doc#action-doc:
+    url: https://github.com/WillAbides/action-doc/releases/download/v{{.version}}/action-doc_{{.version}}_{{.os}}_{{.arch}}.tar.gz
+    required_vars:
+    - version
+    systems:
+    - darwin/amd64
+    - linux/386
+    - linux/amd64
   origin#octo:
     url: https://github.com/octo-cli/octo-cli/releases/download/v{{.version}}/octo-cli_{{.version}}_{{.os}}_{{.arch}}.tar.gz
     archive_path: octo{{.archivepathsuffix}}
@@ -45,8 +57,11 @@ templates:
     - windows/386
     - windows/amd64
 template_sources:
+  action-doc: https://raw.githubusercontent.com/WillAbides/action-doc/main/bindown.yml
   origin: https://raw.githubusercontent.com/WillAbides/bindown-templates/master/bindown.yml
 url_checksums:
+  https://github.com/WillAbides/action-doc/releases/download/v0.0.0/action-doc_0.0.0_darwin_amd64.tar.gz: 70cd5cf738eff8e49a806b946c90cfec18ace46dd1cf57f422440ff10bc79b8a
+  https://github.com/WillAbides/action-doc/releases/download/v0.0.0/action-doc_0.0.0_linux_amd64.tar.gz: dcb9524a49908ae26e65b9433fce24022e79992242097874e7fca6ca82aefc96
   https://github.com/fsaintjacques/semver-tool/archive/3.1.0.tar.gz: 7cad0dea3a6249190f98167476f322c61577b3a069d6afd0022bef9f1824f202
   https://github.com/octo-cli/octo-cli/releases/download/v0.23.0/octo-cli_0.23.0_Darwin_x86_64.tar.gz: 1388c1ca5838a453055930035c81b231b829ef3b0511cc7765dffdd73b83d355
   https://github.com/octo-cli/octo-cli/releases/download/v0.23.0/octo-cli_0.23.0_Linux_x86_64.tar.gz: 7bad6194d91bd9cd86a348dadafd7725b3bb4010afe36294df0740e8c815947a
