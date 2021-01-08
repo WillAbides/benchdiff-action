@@ -1,5 +1,4 @@
 
-foo bar baz
 <!--- start action output --->
 
 Runs go benchmarks on the HEAD and default branch of your pull requests and uses benchstat to
