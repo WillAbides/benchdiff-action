@@ -1,6 +1,12 @@
-# benchdiff
 
-run benchdiff and report status
+foo bar baz
+<!--- start action output --->
+
+Runs go benchmarks on the HEAD and default branch of your pull requests and uses benchstat to
+report the difference and alert you of any benchmarks with degraded performance.
+
+See https://github.com/willabides/benchdiff for more about the underlying benchdiff tool.
+
 
 ## Inputs
 
@@ -14,23 +20,11 @@ All instances of $default_base_ref will be replaced with this repo's default bra
 See https://github.com/willabides/benchdiff for usage
 
 
-### benchdiff_dir
-
-default: `${{ runner.temp }}/benchdiff`
-
-Where benchdiff will be installed
-
 ### benchdiff_version
 
-default: `0.4.1`
+default: `0.5.6`
 
 Version of benchdiff to use (exclude "v" from the front of the release name)
-
-### github_token
-
-__Required__
-
-Token to use for reporting status.
 
 ### install_only
 
@@ -50,19 +44,23 @@ default: `benchdiff`
 
 Name to use in reporting status.
 
+### github_token
+
+__Required__
+
+Token to use for reporting status.
+
+### benchdiff_dir
+
+default: `${{ runner.temp }}/benchdiff`
+
+Where benchdiff will be installed
+
 ## Outputs
-
-### base_sha
-
-git revision benchstat used as base
 
 ### bench_command
 
 command used to run benchmarks
-
-### benchdiff_bin
-
-path to the benchdiff executable
 
 ### benchstat_output
 
@@ -75,3 +73,12 @@ whether any part of the results is degraded
 ### head_sha
 
 git revision benchstat used as head
+
+### base_sha
+
+git revision benchstat used as base
+
+### benchdiff_bin
+
+path to the benchdiff executable
+<!--- end action output --->
