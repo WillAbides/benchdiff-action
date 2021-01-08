@@ -1,16 +1,24 @@
 name: benchdiff
-description: run benchdiff and report status
+description: |
+  Runs go benchmarks on the HEAD and default branch of your pull requests and uses benchstat to
+  report the difference and alert you of any benchmarks with degraded performance.
+
+  See https://github.com/willabides/benchdiff for more about the underlying benchdiff tool.
 branding:
   icon: zap
   color: purple
 inputs:
+  benchdiff_args:
+    description: |
+      Arguments for the benchdiff command.
+      All instances of $default_base_ref will be replaced with this repo's default branch.
+
+      See https://github.com/willabides/benchdiff for usage
+    default: "--base-ref=$default_base_ref"
+    required: false
   benchdiff_version:
     description: Version of benchdiff to use (exclude "v" from the front of the release name)
-    default: 0.4.1
-    required: false
-  benchdiff_dir:
-    description: Where benchdiff will be installed
-    default: ${{ runner.temp }}/benchdiff
+    default: 0.5.6
     required: false
   install_only:
     description: Whether to stop after installing. Any value other than "false" is interpreted as true.
@@ -27,33 +35,29 @@ inputs:
   github_token:
     description: Token to use for reporting status.
     required: true
-  benchdiff_args:
-    description: |
-      Arguments for the benchdiff command.
-      All instances of $default_base_ref will be replaced with this repo's default branch.
-
-      See https://github.com/willabides/benchdiff for usage
-    default: "--base-ref=$default_base_ref"
+  benchdiff_dir:
+    description: Where benchdiff will be installed
+    default: ${{ runner.temp }}/benchdiff
     required: false
 outputs:
-  benchdiff_bin:
-    description: path to the benchdiff executable
-    value: ${{ steps.install.outputs.benchdiff_bin }}
-  benchstat_output:
-    description: output from benchstat
-    value: ${{ steps.run-benchdiff.outputs.benchstat_output }}
   bench_command:
     description: command used to run benchmarks
     value: ${{ steps.run-benchdiff.outputs.bench_command }}
+  benchstat_output:
+    description: output from benchstat
+    value: ${{ steps.run-benchdiff.outputs.benchstat_output }}
+  degraded_result:
+    description: whether any part of the results is degraded
+    value: ${{ steps.run-benchdiff.outputs.degraded_result }}
   head_sha:
     description: git revision benchstat used as head
     value: ${{ steps.run-benchdiff.outputs.head_sha }}
   base_sha:
     description: git revision benchstat used as base
     value: ${{ steps.run-benchdiff.outputs.base_sha }}
-  degraded_result:
-    description: whether any part of the results is degraded
-    value: ${{ steps.run-benchdiff.outputs.degraded_result }}
+  benchdiff_bin:
+    description: path to the benchdiff executable
+    value: ${{ steps.install.outputs.benchdiff_bin }}
 runs:
   using: composite
   steps:

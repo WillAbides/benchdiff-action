@@ -1,0 +1,17 @@
+#!/bin/bash
+
+set -e
+
+CDPATH="" cd -- "$(dirname -- "$(dirname -- "$0")")"
+
+pattern="<!--- start action output --->*<!--- end action output --->"
+
+substitution="$(cat <<EOF
+<!--- start action output --->
+$(script/action-doc action.yml --skip-action-name --header-prefix '#')
+<!--- end action output --->
+EOF
+)"
+
+readme="$(cat README.md)"
+echo "${readme//$pattern/$substitution}" > README.md
