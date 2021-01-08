@@ -4,7 +4,6 @@ set -e
 
 # Expected global environment variables
 #
-# $INSTALL_ONLY
 # $REPORT_STATUS
 # $ACTION_PATH
 # $BENCHSTAT_OUTPUT
@@ -19,10 +18,6 @@ set -e
 if [ "$(uname -s)" != "Linux" ]; then
   echo This action only runs on Linux
   exit 1
-fi
-
-if [ "$INSTALL_ONLY" != "false" ]; then
-  exit 0
 fi
 
 if [ "$REPORT_STATUS" != "true" ]; then

@@ -13,11 +13,15 @@ if [ "$(uname -s)" != "Linux" ]; then
   exit 1
 fi
 
+version="$BENCHDIFF_VERSION"
+if [[ "$version" == "v"* ]]; then
+  version="${version:1}"
+fi
+
 mkdir -p "$BENCHDIFF_DIR"
 cd "$BENCHDIFF_DIR"
-tarfile="benchdiff_${BENCHDIFF_VERSION}_linux_amd64.tar.gz"
-url="https://github.com/WillAbides/benchdiff/releases/download/v${BENCHDIFF_VERSION}/${tarfile}"
+tarfile="benchdiff_${version}_linux_amd64.tar.gz"
+url="https://github.com/WillAbides/benchdiff/releases/download/v${version}/${tarfile}"
 curl --silent -OL "$url"
 tar -xzf "$tarfile" benchdiff
 rm "$tarfile"
-"$ACTION_PATH/src/set-output.sh" "benchdiff_bin" "$BENCHDIFF_DIR/benchdiff"
