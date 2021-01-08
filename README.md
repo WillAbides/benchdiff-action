@@ -72,7 +72,7 @@ __Required__
 
 Token to use for reporting status.
 
-Please use `${{ github.token }}`. If you use another token it needs to be a token for a github app installation
+Please use "github.token". If you use another token it needs to be a token for a github app installation
 with permission to create a check-run.
 
 
