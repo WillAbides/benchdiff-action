@@ -7,3 +7,4 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: script/generate --check
+      - run: script/lint
