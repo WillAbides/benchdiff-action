@@ -21,7 +21,7 @@ fi
 args="$BENCHDIFF_ARGS --json"
 # shellcheck disable=SC2016 # we don't want to expand $default_base_ref
 if [[ "$args" == *'$default_base_ref'* ]]; then
-  remote="$(git rev-parse --abbrev-ref --symbolic-full-name @{u} | cut -d "/" -f 1)"
+  remote="$(git rev-parse --abbrev-ref --symbolic-full-name "@{u}" | cut -d "/" -f 1)"
   default_branch="$(git remote show "$remote" | grep "HEAD branch" | cut -d ":" -f 2 | tr -d '[:space:]')"
   # shellcheck disable=SC2001 # let's stick with sed for now
   args="$(sed "s|\$default_base_ref|$remote/$default_branch|g" <<<"$args")"
