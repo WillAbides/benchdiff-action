@@ -13,7 +13,7 @@ set -e
 # $BENCH_COMMAND
 # $GH_TOKEN
 # $STATUS_NAME
-# $STATUS_REF
+# $STATUS_SHA
 # $GITHUB_REPOSITORY
 
 if [ "$(uname -s)" != "Linux" ]; then
@@ -40,9 +40,9 @@ Degraded: $DEGRADED_RESULT
 EOF
 )"
 
-report_sha="$HEAD_SHA"
-if [ -n "$REPORT_REF" ]; then
-  report_sha="$(git rev-parse "$REPORT_REF")"
+report_sha="$STATUS_SHA"
+if [ -z "$report_sha" ]; then
+  report_sha="$HEAD_SHA"
 fi
 
 conclusion="success"
