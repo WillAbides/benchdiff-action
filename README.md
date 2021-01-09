@@ -68,12 +68,12 @@ Name to use in reporting status. This is the name of the check-run that is creat
 
 ### github_token
 
-__Required__
+default: `${{ github.token }}`
 
 Token to use for reporting status.
 
-Please use "github.token". If you use another token it needs to be a token for a github app installation
-with permission to create a check-run.
+If you use a non-default token it needs to be a token for a github app installation with permission to create a
+check-run.
 
 
 ## Outputs
