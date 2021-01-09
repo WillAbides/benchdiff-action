@@ -56,6 +56,10 @@ inputs:
       Name to use in reporting status. This is the name of the check-run that is created.
     default: benchdiff
     required: false
+  status_ref:
+    description: Report status to this git ref or sha. Default is HEAD.
+    default: ""
+    required: false
   github_token:
     description: |
       Authentication token to use for reporting status.
@@ -117,6 +121,7 @@ runs:
         export DEGRADED_RESULT='${{ steps.run-benchdiff.outputs.degraded_result }}'
         export HEAD_SHA='${{ steps.run-benchdiff.outputs.head_sha }}'
         export BASE_SHA='${{ steps.run-benchdiff.outputs.base_sha }}'
+        export STATUS_REF='${{ inputs.status_ref }}'
         export GH_TOKEN='${{ inputs.github_token }}'
         export STATUS_NAME='${{ inputs.status_name }}'
         "$ACTION_PATH/src/report-status.sh"

@@ -13,6 +13,7 @@ set -e
 # $BENCH_COMMAND
 # $GH_TOKEN
 # $STATUS_NAME
+# $STATUS_REF
 # $GITHUB_REPOSITORY
 
 if [ "$(uname -s)" != "Linux" ]; then
@@ -39,6 +40,11 @@ Degraded: $DEGRADED_RESULT
 EOF
 )"
 
+report_sha="$HEAD_SHA"
+if [ -n "$REPORT_REF" ]; then
+  report_sha="$(git rev-parse "$REPORT_REF")"
+fi
+
 conclusion="success"
 if [ "$DEGRADED_RESULT" = "true" ]; then
   conclusion="failure"
@@ -46,7 +52,7 @@ fi
 postdata="$(
 jq -n \
 --arg conclusion "$conclusion" \
---arg head_sha "$HEAD_SHA" \
+--arg head_sha "$report_sha" \
 --arg name "$STATUS_NAME" \
 --arg output_text "$output_text" \
 --arg output_summary "$output_summary" \

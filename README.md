@@ -65,6 +65,10 @@ default: `benchdiff`
 Name to use in reporting status. This is the name of the check-run that is created.
 
 
+### status_ref
+
+Report status to this git ref or sha. Default is HEAD.
+
 ### github_token
 
 default: `${{ github.token }}`
