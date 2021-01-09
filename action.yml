@@ -1,7 +1,6 @@
 name: benchdiff
 description: |
-  Runs go benchmarks on the HEAD and default branch of your pull requests and uses benchstat to
-  report the difference and alert you of any benchmarks with degraded performance.
+  Runs go benchmarks on HEAD and a base branch and reports the resulting benchstat output.
 
   See https://github.com/willabides/benchdiff for more about the underlying benchdiff tool.
 branding:
@@ -10,54 +9,83 @@ branding:
 inputs:
   benchdiff_args:
     description: |
-      Arguments for the benchdiff command.
-      All instances of $default_base_ref will be replaced with this repo's default branch.
+      Arguments for the benchdiff command line.  This action will run the command line `benchdiff <benchdiff_args>`
+      after making some adjustments to the arguments (listed below).
 
-      See https://github.com/willabides/benchdiff for usage
-    default: "--base-ref=$default_base_ref"
+      If `--base-ref` isn't present in the arguments, then `--base-ref <default branch>` will be added.
+
+      `--json` is always added because the action requires json formatted output.
+
+      `--benchstat-output=markdown` is added when no other benchstat-output value is set because the reports look best
+      with markdown formatting.
+
+      Consider this example:
+      ```
+      --cpu=1,2 --warmup-count=1 --warmup-time=10ms --tolerance=50 --debug
+      ```
+      `--cpu=1,2` is important on actions because runners have only two cores available to them.
+
+      `--warmup-count=1` and `warmup-time=10ms` cause benchdiff to do a quick warmup before starting the benchmarks.
+      This is important on actions because the runners appear to have a small amount of cpu burst available. If you burn
+      through that in the warmup, then it makes for a better cmoparison between the real runs.
+
+      `--tolerance=50` means that a benchmark isn't considered degraded unless it's delta is greater than +50%. Action
+      runners can have inconsistent performance within the same run. This helps mitigate a lot of false alarms.
+
+      `--debug` causes benchdiff to output raw results to stderr (among other debug data). I like having this on just
+      to see progress in the logs.
+
+      See https://github.com/willabides/benchdiff for all available flags.
+
+    default: ""
     required: false
   benchdiff_version:
-    description: Version of benchdiff to use (exclude "v" from the front of the release name)
+    description: |
+      Version of the benchdiff command to use.
+
+      When a new version of this action is released, the default value will be updated to the latest version of
+      benchdiff that isn't a breaking change from the previous default.
     default: 0.5.6
     required: false
-  install_only:
-    description: Whether to stop after installing. Any value other than "false" is interpreted as true.
-    default: "false"
-    required: false
   report_status:
-    description: Whether to report the status. Any value other than "true" is interpreted as false.
+    description: |
+      Whether to report the status. Any value other than "true" is interpreted as false.
+
+      I call this "status" because that's a better known term. What is actually created is a check-run.
     default: "true"
     required: false
   status_name:
-    description: Name to use in reporting status.
+    description: |
+      Name to use in reporting status. This is the name of the check-run that is created.
     default: benchdiff
     required: false
   github_token:
-    description: Token to use for reporting status.
-    required: true
-  benchdiff_dir:
-    description: Where benchdiff will be installed
-    default: ${{ runner.temp }}/benchdiff
+    description: |
+      Authentication token to use for reporting status.
+
+      If you use a non-default token it needs to be a token for a GitHub App installation with permission to create a
+      check-run.
     required: false
+    default: ${{ github.token }}
 outputs:
-  bench_command:
-    description: command used to run benchmarks
-    value: ${{ steps.run-benchdiff.outputs.bench_command }}
   benchstat_output:
-    description: output from benchstat
+    description: |
+      Stdout from the benchdiff command.
     value: ${{ steps.run-benchdiff.outputs.benchstat_output }}
+  bench_command:
+    description: |
+      Command used to run benchmarks. This is derived from the `benchdiff_args` input.
+    value: ${{ steps.run-benchdiff.outputs.bench_command }}
   degraded_result:
-    description: whether any part of the results is degraded
+    description:
+      Whether any of the benchmarks degraded between base and head.
     value: ${{ steps.run-benchdiff.outputs.degraded_result }}
   head_sha:
-    description: git revision benchstat used as head
+    description: The git revision benchstat used as head.
     value: ${{ steps.run-benchdiff.outputs.head_sha }}
   base_sha:
-    description: git revision benchstat used as base
+    description: The git revision benchstat used as base.
     value: ${{ steps.run-benchdiff.outputs.base_sha }}
-  benchdiff_bin:
-    description: path to the benchdiff executable
-    value: ${{ steps.install.outputs.benchdiff_bin }}
 runs:
   using: composite
   steps:
@@ -71,25 +99,21 @@ runs:
     - id: install
       shell: bash
       run: |
-        ACTION_PATH="${{ github.action_path }}"
-        BENCHDIFF_DIR="${{ inputs.benchdiff_dir }}"
-        BENCHDIFF_VERSION="${{ inputs.benchdiff_version }}"
-        export ACTION_PATH BENCHDIFF_DIR BENCHDIFF_VERSION
+        export ACTION_PATH='${{ github.action_path }}'
+        export BENCHDIFF_DIR='${{ runner.temp }}/benchdiff'
+        export BENCHDIFF_VERSION='${{ inputs.benchdiff_version }}'
         "$ACTION_PATH/src/install.sh"
     - id: run-benchdiff
       shell: bash
       run: |
-        ACTION_PATH='${{ github.action_path }}'
-        INSTALL_ONLY='${{ inputs.install_only }}'
-        BENCHDIFF_ARGS='${{ inputs.benchdiff_args }}'
-        BENCHDIFF_BIN='${{ steps.install.outputs.benchdiff_bin }}'
-        export ACTION_PATH INSTALL_ONLY BENCHDIFF_ARGS BENCHDIFF_BIN
+        export ACTION_PATH='${{ github.action_path }}'
+        export BENCHDIFF_ARGS='${{ inputs.benchdiff_args }}'
+        export BENCHDIFF_DIR='${{ runner.temp }}/benchdiff'
         "$ACTION_PATH/src/run.sh"
     - id: report-status
       shell: bash
       run: |
         export ACTION_PATH='${{ github.action_path }}'
-        export INSTALL_ONLY='${{ inputs.install_only }}'
         export REPORT_STATUS='${{ inputs.report_status }}'
         export BENCH_COMMAND='${{ steps.run-benchdiff.outputs.bench_command }}'
         export BENCHSTAT_OUTPUT='${{ steps.run-benchdiff.outputs.benchstat_output }}'
