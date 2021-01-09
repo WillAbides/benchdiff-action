@@ -70,9 +70,9 @@ Name to use in reporting status. This is the name of the check-run that is creat
 
 default: `${{ github.token }}`
 
-Token to use for reporting status.
+Authentication token to use for reporting status.
 
-If you use a non-default token it needs to be a token for a github app installation with permission to create a
+If you use a non-default token it needs to be a token for a GitHub App installation with permission to create a
 check-run.
 
 
