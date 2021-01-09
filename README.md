@@ -1,11 +1,10 @@
 # benchdiff-action
 
+See https://github.com/WillAbides/benchdiff to learn about the benchdiff command that this action runs.
+
 <!--- start action output --->
 
 Runs go benchmarks on HEAD and a base branch and reports the resulting benchstat output.
-
-See https://github.com/willabides/benchdiff for more about the underlying benchdiff tool.
-
 
 ## Inputs
 

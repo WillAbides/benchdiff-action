@@ -1,8 +1,5 @@
 name: benchdiff
-description: |
-  Runs go benchmarks on HEAD and a base branch and reports the resulting benchstat output.
-
-  See https://github.com/willabides/benchdiff for more about the underlying benchdiff tool.
+description: Runs go benchmarks on HEAD and a base branch and reports the resulting benchstat output.
 branding:
   icon: zap
   color: purple
