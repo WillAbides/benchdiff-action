@@ -2,8 +2,7 @@
 
 <!--- start action output --->
 
-Runs go benchmarks on the HEAD and default branch of your pull requests and uses benchstat to
-report the difference and alert you of any benchmarks with degraded performance.
+Runs go benchmarks on HEAD and a base branch and reports the resulting benchstat output.
 
 See https://github.com/willabides/benchdiff for more about the underlying benchdiff tool.
 
@@ -12,7 +11,8 @@ See https://github.com/willabides/benchdiff for more about the underlying benchd
 
 ### benchdiff_args
 
-Arguments for the benchdiff command.
+Arguments for the benchdiff command line.  This action will run the command line `benchdiff <benchdiff_args>`
+after making some adjustments to the arguments (listed below).
 
 If `--base-ref` isn't present in the arguments, then `--base-ref <default branch>` will be added.
 
