@@ -61,11 +61,12 @@ inputs:
     required: false
   github_token:
     description: |
-      Token to use for reporting status.
+      Authentication token to use for reporting status.
 
-      Please use `${{ github.token }}`. If you use another token it needs to be a token for a github app installation
-      with permission to create a check-run.
-    required: true
+      If you use a non-default token it needs to be a token for a GitHub App installation with permission to create a
+      check-run.
+    required: false
+    default: ${{ github.token }}
 outputs:
   benchstat_output:
     description: |
