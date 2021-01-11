@@ -73,12 +73,21 @@ jq -n \
 
 echo "Posting result to https://api.github.com/repos/$GITHUB_REPOSITORY/check-runs"
 
-checkrun="$(
-curl --fail -X 'POST' -d "$postdata" \
+curlout="$(
+curl --silent -X 'POST' -d "$postdata" \
+--write-out "\n%{http_code}" \
 -H 'Accept: application/vnd.github.v3+json' \
 -H 'Content-Type: application/json' \
 -H "Authorization: token $GH_TOKEN" \
 "https://api.github.com/repos/$GITHUB_REPOSITORY/check-runs"
 )"
 
-jq -r .html_url <<< "$checkrun"
+curl_body="$(sed '$d' <<< "$curlout")"
+status_code="$(sed '$!d' <<< "$curlout")"
+
+if [[ "$status_code" != "2"* ]]; then
+  echo "::error ::error posting result: $status_code - $(jq -r '.message' <<< "$curl_body")"
+  exit 1
+fi
+
+jq -r .html_url <<< "$curl_body"
