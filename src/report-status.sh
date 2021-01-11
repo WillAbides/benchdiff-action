@@ -15,6 +15,7 @@ set -e
 # $STATUS_NAME
 # $STATUS_SHA
 # $GITHUB_REPOSITORY
+# $STATUS_ON_DEGRADED
 
 if [ "$(uname -s)" != "Linux" ]; then
   echo This action only runs on Linux
@@ -47,7 +48,7 @@ fi
 
 conclusion="success"
 if [ "$DEGRADED_RESULT" = "true" ]; then
-  conclusion="failure"
+  conclusion="$STATUS_ON_DEGRADED"
 fi
 postdata="$(
 jq -n \

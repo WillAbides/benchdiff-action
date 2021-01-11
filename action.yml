@@ -60,6 +60,13 @@ inputs:
     description: Report status to this sha. Default is the head of your benchdiff run.
     default: ""
     required: false
+  status_on_degraded:
+    description: |
+      Status to report for degraded results.
+
+      Options are "success", "failure" and "neutral"
+    default: "failure"
+    required: false
   github_token:
     description: |
       Authentication token to use for reporting status.
@@ -124,4 +131,5 @@ runs:
         export STATUS_SHA='${{ inputs.status_sha }}'
         export GH_TOKEN='${{ inputs.github_token }}'
         export STATUS_NAME='${{ inputs.status_name }}'
+        export STATUS_ON_DEGRADED='${{ inputs.status_on_degraded }}'
         "$ACTION_PATH/src/report-status.sh"

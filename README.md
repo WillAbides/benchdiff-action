@@ -69,6 +69,15 @@ Name to use in reporting status. This is the name of the check-run that is creat
 
 Report status to this sha. Default is the head of your benchdiff run.
 
+### status_on_degraded
+
+default: `failure`
+
+Status to report for degraded results.
+
+Options are "success", "failure" and "neutral"
+
+
 ### github_token
 
 default: `${{ github.token }}`
