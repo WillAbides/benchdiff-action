@@ -87,6 +87,10 @@ status_code="$(sed '$!d' <<< "$curlout")"
 
 if [[ "$status_code" != "2"* ]]; then
   echo "::error ::error posting result: $status_code - $(jq -r '.message' <<< "$curl_body")"
+  echo "::error ::see result below"
+  echo "$output_summary"
+  echo "----"
+  echo "$output_text"
   exit 1
 fi
 
