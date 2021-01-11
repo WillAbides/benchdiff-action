@@ -74,7 +74,7 @@ jq -n \
 echo "Posting result to https://api.github.com/repos/$GITHUB_REPOSITORY/check-runs"
 
 checkrun="$(
-curl --fail --silent -X 'POST' -d "$postdata" \
+curl --fail -X 'POST' -d "$postdata" \
 -H 'Accept: application/vnd.github.v3+json' \
 -H 'Content-Type: application/json' \
 -H "Authorization: token $GH_TOKEN" \
