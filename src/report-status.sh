@@ -25,8 +25,8 @@ if [ "$REPORT_STATUS" != "true" ]; then
   exit 0
 fi
 
-output_summary="$BENCHSTAT_OUTPUT"
-output_text="$(cat <<EOF
+output_text="$BENCHSTAT_OUTPUT"
+output_summary="$(cat <<EOF
 ## Benchdiff Results
 
 Benchmark Command: \`$BENCH_COMMAND\`
@@ -87,6 +87,10 @@ status_code="$(sed '$!d' <<< "$curlout")"
 
 if [[ "$status_code" != "2"* ]]; then
   echo "::error ::error posting result: $status_code - $(jq -r '.message' <<< "$curl_body")"
+  echo "::error ::see result below"
+  echo "$output_summary"
+  echo "----"
+  echo "$output_text"
   exit 1
 fi
 
