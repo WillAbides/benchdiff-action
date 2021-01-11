@@ -25,8 +25,8 @@ if [ "$REPORT_STATUS" != "true" ]; then
   exit 0
 fi
 
-output_text="$BENCHSTAT_OUTPUT"
-output_summary="$(cat <<EOF
+output_summary="$BENCHSTAT_OUTPUT"
+output_text="$(cat <<EOF
 ## Benchdiff Results
 
 Benchmark Command: \`$BENCH_COMMAND\`
