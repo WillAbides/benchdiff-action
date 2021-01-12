@@ -6,6 +6,8 @@ See https://github.com/WillAbides/benchdiff to learn about the benchdiff command
 
 Runs go benchmarks on HEAD and a base branch and reports the resulting benchstat output.
 
+[See an example result here](https://github.com/WillAbides/benchdiff-action/runs/1691721812).
+
 ## Inputs
 
 ### benchdiff_args
