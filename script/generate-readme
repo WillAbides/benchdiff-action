@@ -6,9 +6,14 @@ CDPATH="" cd -- "$(dirname -- "$(dirname -- "$0")")"
 
 pattern="<!--- start action output --->*<!--- end action output --->"
 
+post_description='[See an example result here](https://github.com/WillAbides/benchdiff-action/runs/1691721812).'
+
 substitution="$(cat <<EOF
 <!--- start action output --->
-$(script/action-doc action.yml --skip-action-name --header-prefix '#')
+$(script/action-doc action.yml \
+  --skip-action-name \
+  --header-prefix '#' \
+  --post-description-text "$post_description")
 <!--- end action output --->
 EOF
 )"
