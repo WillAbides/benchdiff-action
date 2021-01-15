@@ -1,22 +1,13 @@
-#!/bin/bash
+#!/bin/sh
 
 set -e
 
 CDPATH="" cd -- "$(dirname -- "$(dirname -- "$0")")"
 
-pattern="<!--- start action output --->*<!--- end action output --->"
+post_description='[See an example result here](https://github.com/WillAbides/benchdiff-action/runs/1691721812).
 
-post_description='[See an example result here](https://github.com/WillAbides/benchdiff-action/runs/1691721812).'
+To learn about the benchdiff command that this action runs, visit https://github.com/WillAbides/benchdiff.'
 
-substitution="$(cat <<EOF
-<!--- start action output --->
-$(script/action-doc action.yml \
-  --skip-action-name \
-  --header-prefix '#' \
-  --post-description-text "$post_description")
-<!--- end action output --->
-EOF
-)"
-
-readme="$(cat README.md)"
-echo "${readme//$pattern/$substitution}" > README.md
+script/action-doc action.yml \
+ --post-description-text "$post_description" \
+ >./README.md

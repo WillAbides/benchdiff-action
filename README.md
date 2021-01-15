@@ -1,12 +1,10 @@
-# benchdiff-action
-
-See https://github.com/WillAbides/benchdiff to learn about the benchdiff command that this action runs.
-
-<!--- start action output --->
+# benchdiff
 
 Runs go benchmarks on HEAD and a base branch and reports the resulting benchstat output.
 
 [See an example result here](https://github.com/WillAbides/benchdiff-action/runs/1691721812).
+
+To learn about the benchdiff command that this action runs, visit https://github.com/WillAbides/benchdiff.
 
 ## Inputs
 
@@ -113,4 +111,3 @@ The git revision benchstat used as head.
 ### base_sha
 
 The git revision benchstat used as base.
-<!--- end action output --->
