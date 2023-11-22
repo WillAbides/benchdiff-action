@@ -16,10 +16,13 @@ jobs:
           repository: golang/text
           ref: v0.3.6
           fetch-depth: 0
+      - uses: actions/checkout@v4
+        with:
+          path: benchdiff-action
       - uses: actions/setup-go@v4
         with:
           go-version: "~1.15"
-      - uses: WillAbides/benchdiff-action@8be48c8d84fbc4c2aab6baa725f1e4ba145cce29
+      - uses: ./benchdiff-action
         id: benchdiff
         with:
           benchdiff_version: 0.9.1
