@@ -19,7 +19,7 @@ jobs:
       - uses: actions/setup-go@v4
         with:
           go-version: "~1.15"
-      - uses: ./
+      - uses: WillAbides/benchdiff-action@8be48c8d84fbc4c2aab6baa725f1e4ba145cce29
         id: benchdiff
         with:
           benchdiff_version: 0.9.1
