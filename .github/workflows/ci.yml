@@ -28,6 +28,7 @@ jobs:
           status_sha: ${{ github.sha }}
           status_name: text-bench-result
           status_on_degraded: neutral
+          job_summary: true
           benchdiff_args: |
             --packages ./unicode/...
             --cpu=1
