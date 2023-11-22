@@ -35,3 +35,25 @@ jobs:
             --tolerance=50
             --base-ref v0.3.5
             --debug
+      - name: Summary
+        run: |
+          echo "${{ steps.benchdiff.outputs.benchstat_output }}" > benchdiff-report.md
+          {
+            echo "## Benchdiff Results"
+            echo ""
+            echo 'Head: `${{ steps.benchdiff.outputs.head_sha }}`'
+            echo 'Base: `${{ steps.benchdiff.outputs.base_sha }}`'
+            echo 'Degraded: `${{ steps.benchdiff.outputs.degraded_result }}`'
+            echo ""
+            echo "<details>"
+            echo "<summary>See results</summary>"
+            echo ""
+            echo "${{ steps.benchdiff.outputs.benchstat_output }}"
+            echo ""
+            echo "</details>"
+          } >> $GITHUB_STEP_SUMMARY
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: benchdiff-report
+          path: benchdiff-report.md
