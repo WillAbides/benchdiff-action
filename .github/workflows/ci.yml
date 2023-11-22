@@ -16,12 +16,15 @@ jobs:
           repository: golang/text
           ref: v0.3.6
           fetch-depth: 0
+      - uses: actions/checkout@v4
+        with:
+          path: benchdiff-action
       - uses: actions/setup-go@v4
         with:
           go-version: "~1.15"
-      - uses: WillAbides/benchdiff-action@v0
+      - uses: ./benchdiff-action
         with:
-          benchdiff_version: 0.6.2
+          benchdiff_version: 0.9.1
           status_sha: ${{ github.sha }}
           status_name: text-bench-result
           status_on_degraded: neutral
