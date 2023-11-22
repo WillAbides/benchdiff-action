@@ -25,13 +25,16 @@ jobs:
       - uses: ./benchdiff-action
         with:
           benchdiff_version: 0.9.1
-          status_sha: ${{ github.sha }}
-          status_name: text-bench-result
-          status_on_degraded: neutral
+          report_status: false
+          fail_on_degraded: true
+          job_summary: true
+#          status_sha: ${{ github.sha }}
+#          status_name: text-bench-result
+#          status_on_degraded: neutral
           benchdiff_args: |
             --packages ./unicode/...
             --cpu=1
-            --count=10
+            --count=3
             --warmup-count=1
             --benchtime=10ms
             --tolerance=50
