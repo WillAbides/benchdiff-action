@@ -20,8 +20,9 @@ jobs:
         with:
           go-version: "~1.15"
       - uses: WillAbides/benchdiff-action@v0
+        id: benchdiff
         with:
-          benchdiff_version: 0.6.2
+          benchdiff_version: 0.9.1
           status_sha: ${{ github.sha }}
           status_name: text-bench-result
           status_on_degraded: neutral
