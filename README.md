@@ -78,6 +78,24 @@ Status to report for degraded results.
 Options are "success", "failure" and "neutral"
 
 
+### fail_on_degraded
+
+default: `false`
+
+Fail the action if any benchmarks degrade.
+
+This is a boolean value. Any value other than "true" is interpreted as false.
+
+
+### job_summary
+
+default: `false`
+
+Whether to add results to the workflow job summary.
+
+This is a boolean value. Any value other than "true" is interpreted as false.
+
+
 ### github_token
 
 default: `${{ github.token }}`
